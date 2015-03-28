@@ -64,7 +64,7 @@ AppMode Application::nextMode() {
 void Application::loop() {
   int32_t pitch_v = 0, pitch_l = 0;            // Last value of pitch  (for filtering)
   int32_t vol_v = 0,   vol_l = 0;              // Last value of volume (for filtering)
-  uint16_t volumePotValue = 0;                           // State of volume potentiometer
+  uint16_t volumePotValue = 0;                 // State of volume potentiometer
 
 #if !EXTENDED
   wavetableSelector = DEFAULT_WAVETABLE;
@@ -136,7 +136,7 @@ void Application::loop() {
   }
 
   if (volumeValueAvailable) {
-    vol = min(vol, 5000);
+    vol = max(vol, 5000);
 
     vol_v=vol;                  // Averaging volume values
     vol_v=vol_l+((vol_v-vol_l)>>2);
@@ -197,7 +197,7 @@ void Application::playStartupSound() {
 
 void Application::playCalibratingCountdownSound() {
   for (int i = 0; i < 5; i++) {
-    playNote(MIDDLE_C);
+    playNote(MIDDLE_C, 500);
     millitimer(150);
   }
   playNote(MIDDLE_C * 2, 1000);

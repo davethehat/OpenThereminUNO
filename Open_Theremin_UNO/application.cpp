@@ -190,22 +190,22 @@ void Application::playNote(float hz, uint16_t milliseconds = 500, uint8_t volume
 }
 
 void Application::playStartupSound() {
-  playNote(MIDDLE_C, 150);
-  playNote(MIDDLE_C * 2, 150);
-  playNote(MIDDLE_C * 4, 150);
+  playNote(MIDDLE_C, 150, 25);
+  playNote(MIDDLE_C * 2, 150, 25);
+  playNote(MIDDLE_C * 4, 150, 25);
 }
 
 void Application::playCalibratingCountdownSound() {
   for (int i = 0; i < 5; i++) {
-    playNote(MIDDLE_C, 500);
+    playNote(MIDDLE_C, 500, 25);
     millitimer(150);
   }
-  playNote(MIDDLE_C * 2, 1000);
+  playNote(MIDDLE_C * 2, 1000, 25);
 }
 
 void Application::playModeSettingSound() {
   for (int i = 0; i <= _mode; i++) {
-    playNote(MIDDLE_C * 2, 200);
+    playNote(MIDDLE_C * 2, 200, 25);
     millitimer(100);
   }
 }

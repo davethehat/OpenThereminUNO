@@ -24,6 +24,8 @@ const int16_t* const wavetables[] PROGMEM = {
   sine_table8
 };
 
+static const uint32_t MCP_DAC_BASE = 1748;
+
 #define INT0_STATE    (PIND & (1<<PORTD2))
 #define PC_STATE      (PINB & (1<<PORTB0))
 
@@ -108,13 +110,9 @@ ISR (INT1_vect) {
   };
 
   if (waveSample > 0) {                   // multiply 16 bit wave number by 8 bit volume value (11.2us / 5.4us)
-    scaledSample = mul_16_8(waveSample, vol8);
-    scaledSample = scaledSample >> 9;
-    scaledSample = scaledSample + 1748;
+    scaledSample = MCP_DAC_BASE + (mul_16_8(waveSample, vol8) >> 9);
   } else {
-    scaledSample = mul_16_8(-waveSample, vol8);
-    scaledSample = scaledSample >> 9;
-    scaledSample = 1748 - scaledSample;
+    scaledSample = MCP_DAC_BASE - (mul_16_8(-waveSample, vol8) >> 9);
   }
 
   mcpDacSend(scaledSample);        //Send result to Digital to Analogue Converter (audio out) (9.6 us)

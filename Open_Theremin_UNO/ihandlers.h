@@ -26,6 +26,7 @@ extern volatile uint16_t add_val;         // Table pointer increment
 
 inline void resetPitchFlag()   { pitchValueAvailable = false; }
 inline void resetVolFlag()     { volumeValueAvailable = false; }
+
 inline void savePitchCounter() { pitch_counter_l=pitch_counter; }
 inline void saveVolCounter()   { vol_counter_l=vol_counter; };
 

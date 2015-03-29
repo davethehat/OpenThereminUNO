@@ -12,11 +12,11 @@
 // wavetables in a standard build
 #define DEFAULT_WAVETABLE 0
 
-// Set to build with control voltage output
-#define CV_ENABLED 0
-
 // Set to build with serial support
 #define SERIAL_ENABLED 0
+
+// Set to build with control voltage output (experimental)
+#define CV_ENABLED 0
 
 
 #endif // _BUILD_H

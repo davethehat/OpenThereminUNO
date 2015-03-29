@@ -48,7 +48,7 @@ void Application::initialiseInterrupts() {
   ihInitialiseInterrupts();
 }
 
-#if CV_ENABLED                                 // Initialise PWM Generator for CV oitput
+#if CV_ENABLED                                 // Initialise PWM Generator for CV output
 void initialiseCVOut() {
    TCCR0A = (1<<COM0A1)|(1<<WGM01)|(1<<WGM00); // Set PWM on OC0A
    TCCR0B = (1<<CS00);                         // Set Clock with No prescaling on Timer 0

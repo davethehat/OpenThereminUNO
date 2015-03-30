@@ -144,7 +144,7 @@ void Application::loop() {
 
     switch (_mode) {                 
       case TRIM_PITCH:  vol_v = MAX_VOLUME;                                                      break;
-      case TRIM_VOLUME: vol_v = MAX_VOLUME; setWavetableSampleAdvance(TRIM_PITCH_FACTOR/vol_v);  break;
+      case TRIM_VOLUME: setWavetableSampleAdvance(TRIM_PITCH_FACTOR/vol_v); vol_v = MAX_VOLUME;  break;
       case PITCH_ONLY:  vol_v = MAX_VOLUME;                                                      break;
       case NORMAL:      vol_v = MAX_VOLUME-(volCalibrationBase-vol_v);                                     break;
     };

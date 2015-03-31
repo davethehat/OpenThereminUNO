@@ -64,7 +64,7 @@ AppMode Application::nextMode() {
 void Application::loop() {
   int32_t pitch_v = 0, pitch_l = 0;            // Last value of pitch  (for filtering)
   int32_t vol_v = 0,   vol_l = 0;              // Last value of volume (for filtering)
-  uint16_t volumePotValue = 0;                 // State of volume potentiometer
+  uint16_t volumePotValue = 0;
 
 #if !EXTENDED
   wavetableSelector = DEFAULT_WAVETABLE;
@@ -74,7 +74,7 @@ void Application::loop() {
   mloop:                   // Main loop avoiding the GCC "optimization"
 
 #if EXTENDED  
-  volumePotValue = analogRead(VOLUME_POT);
+  volumePotValue    = analogRead(VOLUME_POT);
   wavetableSelector = analogRead(WAVE_SELECT_POT) >> 7;
 #endif
 
@@ -153,7 +153,7 @@ void Application::loop() {
     vol_v = min(vol_v, 4095);
     vol_v = vol_v - (1 + MAX_VOLUME - (volumePotValue << 2));
     vol_v = max(vol_v, 0);
-    vol8 = vol_v >> 4;
+    vScaledVolume = vol_v >> 4;
     
     volumeValueAvailable = false;
   }
@@ -183,10 +183,10 @@ void Application::hzToAddVal(float hz) {
 }
 
 void Application::playNote(float hz, uint16_t milliseconds = 500, uint8_t volume = 255) {
-  vol8 = volume;
+  vScaledVolume = volume;
   hzToAddVal(hz);
   millitimer(milliseconds);
-  vol8 = 0;
+  vScaledVolume = 0;
 }
 
 void Application::playStartupSound() {

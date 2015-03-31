@@ -29,22 +29,22 @@ static const uint32_t MCP_DAC_BASE = 1748;
 #define INT0_STATE    (PIND & (1<<PORTD2))
 #define PC_STATE      (PINB & (1<<PORTB0))
 
-volatile uint8_t vol8 = 0;
-volatile uint16_t add_val = 0;
+volatile uint8_t  vScaledVolume = 0;
+volatile uint16_t vPointerIncrement = 0;
 
 volatile uint16_t pitch = 0;            // Pitch value
 volatile uint16_t pitch_counter = 0;    // Pitch counter
 volatile uint16_t pitch_counter_l = 0;  // Last value of pitch counter
 
-volatile bool volumeValueAvailable = 0;            // Volume read flag
-volatile bool pitchValueAvailable = 0;          // Pitch read flag
+volatile bool volumeValueAvailable = 0;  // Volume read flag
+volatile bool pitchValueAvailable = 0;   // Pitch read flag
 
-volatile uint16_t vol;                 // Volume value
+volatile uint16_t vol;                   // Volume value
 volatile uint16_t vol_counter = 0;
-volatile uint16_t vol_counter_i = 0;   // Volume counter
-volatile uint16_t vol_counter_l;       // Last value of volume counter
+volatile uint16_t vol_counter_i = 0;     // Volume counter
+volatile uint16_t vol_counter_l;         // Last value of volume counter
 
-volatile uint8_t wavetableSelector = 0;            // wavetable selector
+volatile uint8_t wavetableSelector = 0;  // wavetable selector
 
 static volatile uint16_t pointer       = 0;  // Table pointer
 static volatile uint8_t  debounce_p, debounce_v  = 0;  // Counters for debouncing
@@ -110,14 +110,14 @@ ISR (INT1_vect) {
   };
 
   if (waveSample > 0) {                   // multiply 16 bit wave number by 8 bit volume value (11.2us / 5.4us)
-    scaledSample = MCP_DAC_BASE + (mul_16_8(waveSample, vol8) >> 9);
+    scaledSample = MCP_DAC_BASE + (mul_16_8(waveSample, vScaledVolume) >> 9);
   } else {
-    scaledSample = MCP_DAC_BASE - (mul_16_8(-waveSample, vol8) >> 9);
+    scaledSample = MCP_DAC_BASE - (mul_16_8(-waveSample, vScaledVolume) >> 9);
   }
 
   mcpDacSend(scaledSample);        //Send result to Digital to Analogue Converter (audio out) (9.6 us)
 
-  pointer = pointer + add_val;    // increment table pointer (ca. 2us)
+  pointer = pointer + vPointerIncrement;    // increment table pointer (ca. 2us)
   incrementTimer();               // update 32us timer
 
   if (PC_STATE) debounce_p++;

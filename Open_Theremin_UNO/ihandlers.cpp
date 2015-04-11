@@ -44,7 +44,7 @@ volatile uint16_t vol_counter = 0;
 volatile uint16_t vol_counter_i = 0;     // Volume counter
 volatile uint16_t vol_counter_l;         // Last value of volume counter
 
-volatile uint8_t wavetableSelector = 0;  // wavetable selector
+volatile uint8_t vWavetableSelector = 0;  // wavetable selector
 
 static volatile uint16_t pointer       = 0;  // Table pointer
 static volatile uint8_t  debounce_p, debounce_v  = 0;  // Counters for debouncing
@@ -98,15 +98,15 @@ ISR (INT1_vect) {
   // The slightly odd tactic here is to provide compile-time expressions for the wavetable
   // positions. Making addr1 the index into the wavtables array breaks the time limit for
   // the interrupt handler
-  switch (wavetableSelector) {
-    case 1:  waveSample = (int16_t) pgm_read_word_near(wavetables[1] + offset); break; 
-    case 2:  waveSample = (int16_t) pgm_read_word_near(wavetables[2] + offset); break; 
-    case 3:  waveSample = (int16_t) pgm_read_word_near(wavetables[3] + offset); break; 
-    case 4:  waveSample = (int16_t) pgm_read_word_near(wavetables[4] + offset); break; 
-    case 5:  waveSample = (int16_t) pgm_read_word_near(wavetables[5] + offset); break; 
-    case 6:  waveSample = (int16_t) pgm_read_word_near(wavetables[6] + offset); break; 
-    case 7:  waveSample = (int16_t) pgm_read_word_near(wavetables[7] + offset); break; 
-    default: waveSample = (int16_t) pgm_read_word_near(wavetables[0] + offset); break; 
+  switch (vWavetableSelector) {
+    case 1:  waveSample = (int16_t) pgm_read_word_near(wavetables[1] + offset); break;
+    case 2:  waveSample = (int16_t) pgm_read_word_near(wavetables[2] + offset); break;
+    case 3:  waveSample = (int16_t) pgm_read_word_near(wavetables[3] + offset); break;
+    case 4:  waveSample = (int16_t) pgm_read_word_near(wavetables[4] + offset); break;
+    case 5:  waveSample = (int16_t) pgm_read_word_near(wavetables[5] + offset); break;
+    case 6:  waveSample = (int16_t) pgm_read_word_near(wavetables[6] + offset); break;
+    case 7:  waveSample = (int16_t) pgm_read_word_near(wavetables[7] + offset); break;
+    default: waveSample = (int16_t) pgm_read_word_near(wavetables[0] + offset); break;
   };
 
   if (waveSample > 0) {                   // multiply 16 bit wave number by 8 bit volume value (11.2us / 5.4us)

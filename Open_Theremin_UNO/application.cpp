@@ -12,7 +12,7 @@ const AppMode AppModeValues[] = {TRIM_PITCH, TRIM_VOLUME, PITCH_ONLY, NORMAL};
 static int32_t pitchCalibrationBase = 0;
 static int32_t volCalibrationBase   = 0;
 
-Application::Application() 
+Application::Application()
   : _state(PLAYING),
     _mode(NORMAL) {
 };
@@ -22,16 +22,16 @@ void Application::setup() {
   Serial.begin(Application::BAUD);
 #endif
 
-  pinMode(Application::BUTTON_PIN, INPUT_PULLUP);            
+  pinMode(Application::BUTTON_PIN, INPUT_PULLUP);
   pinMode(Application::LED_PIN,    OUTPUT);
-  
-  initialiseTimer();  
+
+  initialiseTimer();
   initialiseInterrupts();
 
   interrupts();
-  
+
   mcpDacInit();
-  
+
 #if CV_ENABLED
   initialiseCVOut();
 #endif
@@ -67,15 +67,15 @@ void Application::loop() {
   uint16_t volumePotValue = 0;
 
 #if !EXTENDED
-  wavetableSelector = DEFAULT_WAVETABLE;
+  vWavetableSelector = DEFAULT_WAVETABLE;
   volumePotValue  = 1024;
 #endif
 
   mloop:                   // Main loop avoiding the GCC "optimization"
 
-#if EXTENDED  
+#if EXTENDED
   volumePotValue    = analogRead(VOLUME_POT);
-  wavetableSelector = analogRead(WAVE_SELECT_POT) >> 7;
+  vWavetableSelector = analogRead(WAVE_SELECT_POT) >> 7;
 #endif
 
   if (_state == PLAYING && HW_BUTTON_PRESSED) {
@@ -89,10 +89,10 @@ void Application::loop() {
       playCalibratingCountdownSound();
 
       calibrate();
-      
+
       _mode=NORMAL;
       HW_LED_OFF;
-    } 
+    }
     _state = PLAYING;
   };
 
@@ -100,8 +100,8 @@ void Application::loop() {
     _mode = nextMode();
 
     playModeSettingSound();
-    
-    while (HW_BUTTON_PRESSED) 
+
+    while (HW_BUTTON_PRESSED)
       ; // NOP
     _state = PLAYING;
   };
@@ -121,8 +121,8 @@ void Application::loop() {
   if (pitchValueAvailable) {                        // If capture event
 
     pitch_v=pitch;                         // Averaging pitch values
-    pitch_v=pitch_l+((pitch_v-pitch_l)>>2); 
-    pitch_l=pitch_v;    
+    pitch_v=pitch_l+((pitch_v-pitch_l)>>2);
+    pitch_l=pitch_v;
 
     // set wave frequency for each mode
     switch (_mode) {
@@ -131,7 +131,7 @@ void Application::loop() {
       case PITCH_ONLY  : setWavetableSampleAdvance((pitchCalibrationBase-pitch_v)/2+200); break;
       case NORMAL      : setWavetableSampleAdvance((pitchCalibrationBase-pitch_v)/2+200); break;
     };
-    
+
     pitchValueAvailable = false;
   }
 
@@ -142,7 +142,7 @@ void Application::loop() {
     vol_v=vol_l+((vol_v-vol_l)>>2);
     vol_l=vol_v;
 
-    switch (_mode) {                 
+    switch (_mode) {
       case TRIM_PITCH:  vol_v = MAX_VOLUME;                                                      break;
       case TRIM_VOLUME: setWavetableSampleAdvance(TRIM_PITCH_FACTOR/vol_v); vol_v = MAX_VOLUME;  break;
       case PITCH_ONLY:  vol_v = MAX_VOLUME;                                                      break;
@@ -154,17 +154,17 @@ void Application::loop() {
     vol_v = vol_v - (1 + MAX_VOLUME - (volumePotValue << 2));
     vol_v = max(vol_v, 0);
     vScaledVolume = vol_v >> 4;
-    
+
     volumeValueAvailable = false;
   }
 
-  goto mloop;                           // End of main loop 
+  goto mloop;                           // End of main loop
 }
 
-void Application::calibrate()           
+void Application::calibrate()
 {
   resetPitchFlag();
-  resetTimer();  
+  resetTimer();
   savePitchCounter();
   while (!pitchValueAvailable && timerUnexpiredMillis(10))
     ; // NOP
